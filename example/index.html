@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Webpush Golang Example</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 2rem; }
+    .row { margin-bottom: 1rem; }
+    label { display: block; margin-bottom: 0.25rem; font-weight: 600; }
+    input[type="text"] { width: 100%; max-width: 640px; padding: 0.5rem; font-size: 1rem; }
+    button { padding: 0.5rem 0.75rem; font-size: 1rem; cursor: pointer; }
+    pre { background: #f6f8fa; padding: 0.75rem; max-width: 640px; overflow: auto; }
+  </style>
+</head>
+<body>
+  <div class="row">
+    <label for="vapidPublicKey">VAPID public key</label>
+    <input id="vapidPublicKey" type="text" placeholder="Enter your Base64-URL VAPID public key">
+  </div>
+  <div class="row">
+    <button id="subscribeBtn">Subscribe</button>
+  </div>
+  <div class="row">
+    <pre id="output"></pre>
+  </div>
+  <script>
+    function subscribe() {
+      const keyInput = document.getElementById('vapidPublicKey');
+      const vapidPublicKey = (keyInput && keyInput.value ? keyInput.value : '').trim();
+      if (!vapidPublicKey) {
+        alert('Please enter your VAPID public key before subscribing.');
+        keyInput && keyInput.focus();
+        return;
+      }
+      navigator.serviceWorker.ready
+        .then(function(registration) {
+          return registration.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
+          });
+        })
+        .then(function(subscription) {
+          const result = JSON.stringify({ subscription: subscription }, null, 2);
+          console.log(result);
+          const out = document.getElementById('output');
+          if (out) out.textContent = result;
+        })
+        .catch(err => {
+          console.error(err);
+          const out = document.getElementById('output');
+          if (out) out.textContent = String(err);
+        });
+    }
+
+    function urlBase64ToUint8Array(base64String) {
+      const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+      const base64 = (base64String + padding)
+        .replace(/\-/g, '+')
+        .replace(/_/g, '/');
+      const rawData = window.atob(base64);
+      return Uint8Array.from([...rawData].map(char => char.charCodeAt(0)));
+    }
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js');
+      navigator.serviceWorker.ready
+        .then(function(registration) {
+          return registration.pushManager.getSubscription();
+        })
+        .then(function(subscription) {
+          if (subscription) {
+            const result = JSON.stringify({ subscription: subscription }, null, 2);
+            console.log(result);
+            const out = document.getElementById('output');
+            if (out) out.textContent = result;
+          }
+        });
+    }
+
+    document.getElementById('subscribeBtn').addEventListener('click', subscribe);
+  </script>
+</body>
+</html>
