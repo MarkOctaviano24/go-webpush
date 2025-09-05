@@ -1,4 +1,4 @@
-# go-webpush
+# go-webpush [![Go Reference](https://pkg.go.dev/badge/github.com/marknefedov/go-webpush.svg)](https://pkg.go.dev/github.com/marknefedov/go-webpush)
 
 Web Push API encryption and sending library for Go with VAPID support.
 
