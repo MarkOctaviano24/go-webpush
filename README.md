@@ -18,7 +18,6 @@ go get github.com/marknefedov/go-webpush
 package main
 
 import (
-    "fmt"
     "os"
     webpush "github.com/marknefedov/go-webpush"
 )
