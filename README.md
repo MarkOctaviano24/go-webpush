@@ -1,4 +1,8 @@
-# go-webpush [![Go Reference](https://pkg.go.dev/badge/github.com/marknefedov/go-webpush.svg)](https://pkg.go.dev/github.com/marknefedov/go-webpush)
+# go-webpush 
+[![Go Reference](https://pkg.go.dev/badge/github.com/marknefedov/go-webpush.svg)](https://pkg.go.dev/github.com/marknefedov/go-webpush)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/marknefedov/go-webpush)
+[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/marknefedov/go-webpush)](https://github.com/marknefedov/go-webpush/releases/latest)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/marknefedov/go-webpush/ci.yml?branch=master)](https://github.com/marknefedov/go-webpush/actions/workflows/ci.yml)
 
 Web Push API encryption and sending library for Go with VAPID support.
 
