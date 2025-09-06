@@ -309,7 +309,7 @@ func decodeSubscriptionKey(key string) ([]byte, error) {
 	return base64.RawURLEncoding.DecodeString(key)
 }
 
-// Returns a key of length "length" given an hkdf function
+// Returns a key of length "length" given a hkdf function
 func getHKDFKey(hkdf io.Reader, length int) ([]byte, error) {
 	key := make([]byte, length)
 	n, err := io.ReadFull(hkdf, key)
