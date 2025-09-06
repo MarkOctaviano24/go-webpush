@@ -57,7 +57,13 @@ type Keys struct {
 
 // Equal compares two Keys for equality.
 func (k *Keys) Equal(o Keys) bool {
-	return k.Auth == o.Auth && k.P256dh.Equal(o.P256dh)
+	if k.Auth != o.Auth {
+		return false
+	}
+	if k.P256dh == nil || o.P256dh == nil {
+		return k.P256dh == nil && o.P256dh == nil
+	}
+	return k.P256dh.Equal(o.P256dh)
 }
 
 var _ json.Marshaler = (*Keys)(nil)
@@ -124,14 +130,33 @@ func DecodeSubscriptionKeys(auth, p256dh string) (keys Keys, err error) {
 
 // Subscription represents a PushSubscription object from the Push API
 type Subscription struct {
-	Endpoint       string    `json:"endpoint"`
-	Keys           Keys      `json:"keys"`
-	ExpirationTime time.Time `json:"expirationTime"`
+	Endpoint       string     `json:"endpoint"`
+	Keys           Keys       `json:"keys"`
+	ExpirationTime *time.Time `json:"expirationTime"`
 }
 
 // SendNotification sends a push notification to a subscription's endpoint,
 // applying encryption (RFC 8291) and adding a VAPID header (RFC 8292).
 func SendNotification(ctx context.Context, message []byte, s *Subscription, options *Options) (*http.Response, error) {
+	if s == nil || s.Endpoint == "" {
+		return nil, fmt.Errorf("subscription endpoint is required")
+	}
+	if s.Keys.P256dh == nil {
+		return nil, fmt.Errorf("subscription keys.p256dh is required")
+	}
+	if options == nil {
+		options = &Options{}
+	}
+	if options.TTL < 0 {
+		return nil, fmt.Errorf("TTL must be >= 0")
+	}
+	if options.RecordSize == 0 {
+		options.RecordSize = MaxRecordSize
+	}
+	if options.VAPIDKeys == nil {
+		return nil, fmt.Errorf("VAPIDKeys are required")
+	}
+
 	// Compose message body (RFC8291 encryption of the message)
 	body, err := EncryptNotification(message, s.Keys, options.RecordSize)
 	if err != nil {

@@ -73,6 +73,7 @@ func main() {
 	if vk1 != nil && vk2 != nil && vk1.Equal(vk2) {
 		log.Println("VAPID keys are equal")
 		log.Println("Using loaded keys")
+		vapidKeys = vk1
 	} else {
 		log.Println("Generating new VAPID keys")
 		var err error
