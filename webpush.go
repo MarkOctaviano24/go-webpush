@@ -14,7 +14,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"net/http"
 	"strconv"
 	"strings"
@@ -332,15 +331,4 @@ func decodeSubscriptionKey(key string) ([]byte, error) {
 		return base64.RawStdEncoding.DecodeString(key)
 	}
 	return base64.RawURLEncoding.DecodeString(key)
-}
-
-// Returns a key of length "length" given a hkdf function
-func getHKDFKey(hkdf io.Reader, length int) ([]byte, error) {
-	key := make([]byte, length)
-	n, err := io.ReadFull(hkdf, key)
-	if n != len(key) || err != nil {
-		return key, err
-	}
-
-	return key, nil
 }
