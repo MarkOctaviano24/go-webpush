@@ -3,6 +3,11 @@ permissions:
   contents: read
 on:
   workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to refresh (e.g., v1.2.3 or module/v1.2.3)'
+        required: true
+        type: string
 
   release:
     types:
@@ -19,6 +24,8 @@ jobs:
   build:
     name: Renew documentation
     runs-on: ubuntu-latest
+    env:
+      TAG: ${{ github.event.inputs.tag || github.ref_name }}
     steps:
-      - name: Pull new module version
-        uses: andrewslotin/go-proxy-pull-action@master
+      - name: Warm pkg.go.dev cache
+        run: curl https://proxy.golang.org/github.com/marknefedov/go-webpush/@v/${{ env.TAG }}.info
