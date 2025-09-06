@@ -2,6 +2,8 @@ name: Update pkg.go.dev cache
 permissions:
   contents: read
 on:
+  workflow_dispatch:
+
   release:
     types:
       - created
