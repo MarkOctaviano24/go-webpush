@@ -1,4 +1,6 @@
-name: go-pkg-cache.yml
+name: Update pkg.go.dev cache
+permissions:
+  contents: read
 on:
   release:
     types:
